@@ -18,9 +18,9 @@ public class Blockchain implements java.io.Serializable {
         blockId++;
     }
     public void addBlockByData(ArrayList<String> data){
-        Block block = new Block(data, getLastBlock().hash);
-        block.mineBlock(difficulty);
-        addBlock(block);
+//        Block block = new Block(data, getLastBlock().hash);
+//        block.mineBlock(difficulty);
+//        addBlock(block);
     }
     public ArrayList<Block> get(){
         return blockchain;
@@ -33,6 +33,10 @@ public class Blockchain implements java.io.Serializable {
             System.out.println("*******************************");
         }
     }
+    public int getBlockChainLength(){
+        return blockchain.size();
+    }
+
     public Block getBlock(int i){
         return blockchain.get(i);
     }

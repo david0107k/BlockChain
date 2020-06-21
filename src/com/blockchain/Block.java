@@ -10,20 +10,26 @@ public class Block implements java.io.Serializable {
     private long timeStamp; //as number of milliseconds since 1/1/1970.
     private int nonce;
     private boolean isPoWFinished = false;
-
+    private String sourceWork = "";
+    private int blockId;
     //Block Constructor.
-    public Block(ArrayList<String> data,String previousHash ) {
+    public Block(ArrayList<String> data,String previousHash,String sourceWork,int blockId) {
         this.dataList = data;
         this.previousHash = previousHash;
         this.timeStamp = new Date().getTime();
         this.merkleTree = new MerkleTree(data);
         this.hash = this.merkleTree.getTreeHash(); //Making sure we do this after we set the other values.
+        this.sourceWork = sourceWork;
+        this.blockId = blockId;
         calculateHash();
     }
     public void ShowTrascation(){
         for(int i = 0 ; i < dataList.size() ; i++){
             System.out.println("Trasction " + i + ": " + dataList.get(i));
         }
+    }
+    public int getBlockId(){
+        return blockId;
     }
     public void ShowHashTree(){
         merkleTree.ShowTreeStruct();
@@ -33,6 +39,7 @@ public class Block implements java.io.Serializable {
         String input = new StringBuilder(previousHash)
                 .append(Long.toString(timeStamp))
                 .append(Integer.toString(nonce))
+                .append(Integer.toString(blockId))
                 .append(merkleTree.getRoot().getHash()).toString();
         String blockHash = StringUtil.applySha256(input);
         return blockHash;

@@ -1,10 +1,10 @@
 package com.blockchain;
 
-import com.google.gson.GsonBuilder;
-
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
+
     static void waitAsec(){
         try {
             Thread.sleep(3000);
@@ -13,54 +13,43 @@ public class Main {
         }
     }
 
+
     public static void main(String[] args) {
-        ArrayList<String> data1 = new ArrayList<String>();
-        data1.add("first");
-        data1.add("data");
-        data1.add("list");
 
-        ArrayList<String> data2 = new ArrayList<String>();
-        data2.add("second");
-        data2.add("value");
-        data2.add("table!!");
+        ArrayList<String> firstData = new ArrayList<String>();
+        firstData.add("firstData");
+        Blockchain blockchain = new Blockchain(new Block(firstData,"0" , "node-2",0),5);
 
-        ArrayList<String> data3 = new ArrayList<String>();
-        data3.add("thrid");
-        data3.add("one");
-        data3.add("item!!");
+        ArrayList<String> edgeIPList = new ArrayList<String>();
+        edgeIPList.add("192.168.56.101");
+        edgeIPList.add("192.168.56.102");
 
-        Blockchain blockchain = new Blockchain(new Block(data1, "0"),5);
-        blockchain.addBlock(new Block(data2,blockchain.getLastBlock().hash));
-        blockchain.addBlock(new Block(data3,blockchain.getLastBlock().hash));
+        RawDataReceiver rawDataReceiver = new RawDataReceiver(blockchain,"192.168.56.101",1234 , edgeIPList, 2);
+        rawDataReceiver.start();
 
-        blockchain.ShowAllBlock();
+        BlockReceiver blockReceiver = new BlockReceiver(blockchain,"192.168.56.101",1235 , edgeIPList, 2);
+        blockReceiver.start();
 
-
-//        blockchain.addBlockByData("Yo im the second block");
-//        blockchain.addBlockByData("Hey im the third block");
-
-//        String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
-//        System.out.println("\nThe block chain: ");
-//        System.out.println(blockchainJson);
-
-
-
-//        SocketServer server = new SocketServer();
-//        server.start();
-//        System.out.println("Server is Starting");
-//
-//        String targetIp = "192.168.56.102";// 連線的ip
-//        //String targetIp = "127.0.0.1";// 連線的ip
-//        int port = 8765;// 連線的port
-//
-//        int i = 0;
-//        SocketClient client = new SocketClient(targetIp,port);
-//        client.sendMessage(blockchain.getLastBlock());
-
-
-//        while(i++ <= 10){
-//            waitAsec();
-//            client.sendMessage(blockchain.getLastBlock());
-//        }
+        boolean stop = false;
+        while(!stop){
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
+            switch (input){
+                case "status":
+                    System.out.println(blockchain.getBlockChainLength());
+                    break;
+                case "exit":
+                    rawDataReceiver.terminate();
+                    System.out.println("Stop Now.");
+                    stop = true;
+                case "getohterip":
+                    System.out.println(rawDataReceiver.getOtherIPList());
+                default:
+                    System.out.println("Wrong Input");
+                    break;
+            }
+        }
+        System.out.println("return");
+        return;
     }
 }
